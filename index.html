@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <p class="eyebrow">Version 1</p>
+      <h1>Assignment Tracker</h1>
+      <p class="subtitle">Pick a week, add your assignments, and check them off as you finish them.</p>
+    </header>
+
+    <section class="panel">
+      <label class="label" for="week-select">Week</label>
+      <select id="week-select" class="input"></select>
+      <p id="week-dates" class="helper-text"></p>
+      <p id="progress-text" class="progress-text">0 of 0 completed</p>
+    </section>
+
+    <section class="panel">
+      <h2>Add Assignment</h2>
+      <form id="assignment-form" class="assignment-form">
+        <label class="label" for="class-select">Class</label>
+        <select id="class-select" class="input" required></select>
+
+        <label class="label" for="task-name">Task name</label>
+        <input
+          id="task-name"
+          class="input"
+          type="text"
+          maxlength="120"
+          placeholder="Example: Read chapter 3"
+          required
+        >
+
+        <button type="submit" class="button">Add Assignment</button>
+      </form>
+    </section>
+
+    <section id="assignment-list" class="panel assignment-list" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

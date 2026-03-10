@@ -1,4 +1,4 @@
-﻿const classes = [
+const classes = [
   "Survey of Business",
   "General Psychology",
   "Composition 2",
@@ -6,19 +6,8 @@
   "Principles of Microeconomics"
 ];
 
-const weeks = [
-  {
-    id: "week-1",
-    label: "Week of March 9",
-    dates: "Monday, March 9, 2026 to Sunday, March 15, 2026"
-  },
-  {
-    id: "week-2",
-    label: "Week of March 16",
-    dates: "Monday, March 16, 2026 to Sunday, March 22, 2026"
-  }
-];
-
+const schoolStart = new Date("2026-03-09T12:00:00");
+const schoolEnd = new Date("2026-05-24T12:00:00");
 const storageKey = "assignment-tracker-v1";
 
 const weekSelect = document.getElementById("week-select");
@@ -28,6 +17,47 @@ const assignmentForm = document.getElementById("assignment-form");
 const assignmentList = document.getElementById("assignment-list");
 const weekDates = document.getElementById("week-dates");
 const progressText = document.getElementById("progress-text");
+
+function formatShortDate(date) {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function formatLongDate(date) {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+function createWeeks(startDate, endDate) {
+  const weeks = [];
+  let currentStart = new Date(startDate);
+  let weekNumber = 1;
+
+  while (currentStart <= endDate) {
+    const currentEnd = new Date(currentStart);
+    currentEnd.setDate(currentEnd.getDate() + 6);
+
+    weeks.push({
+      id: `week-${weekNumber}`,
+      label: `Week ${weekNumber} (${formatShortDate(currentStart)})`,
+      dates: `${formatLongDate(currentStart)} to ${formatLongDate(currentEnd)}`
+    });
+
+    currentStart = new Date(currentStart);
+    currentStart.setDate(currentStart.getDate() + 7);
+    weekNumber += 1;
+  }
+
+  return weeks;
+}
+
+const weeks = createWeeks(schoolStart, schoolEnd);
 
 function createEmptyData() {
   const data = {};
@@ -89,6 +119,9 @@ function saveData() {
 }
 
 function fillSelectors() {
+  weekSelect.innerHTML = "";
+  classSelect.innerHTML = "";
+
   weeks.forEach((week) => {
     const option = document.createElement("option");
     option.value = week.id;

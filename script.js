@@ -15,22 +15,13 @@ const classSelect = document.getElementById("class-select");
 const taskNameInput = document.getElementById("task-name");
 const assignmentForm = document.getElementById("assignment-form");
 const assignmentList = document.getElementById("assignment-list");
-const weekDates = document.getElementById("week-dates");
 const progressText = document.getElementById("progress-text");
+const progressBar = document.getElementById("progress-bar");
 
 function formatShortDate(date) {
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric"
-  });
-}
-
-function formatLongDate(date) {
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
   });
 }
 
@@ -40,13 +31,9 @@ function createWeeks(startDate, endDate) {
   let weekNumber = 1;
 
   while (currentStart <= endDate) {
-    const currentEnd = new Date(currentStart);
-    currentEnd.setDate(currentEnd.getDate() + 6);
-
     weeks.push({
       id: `week-${weekNumber}`,
-      label: `Week ${weekNumber} (${formatShortDate(currentStart)})`,
-      dates: `${formatLongDate(currentStart)} to ${formatLongDate(currentEnd)}`
+      label: `Week ${weekNumber} (${formatShortDate(currentStart)})`
     });
 
     currentStart = new Date(currentStart);
@@ -145,14 +132,14 @@ function updateProgress(weekId) {
   const weekAssignments = classes.flatMap((className) => assignmentData[weekId][className]);
   const total = weekAssignments.length;
   const completed = weekAssignments.filter((item) => item.completed).length;
+  const progressPercent = total === 0 ? 0 : (completed / total) * 100;
+
   progressText.textContent = `${completed} of ${total} completed`;
+  progressBar.style.width = `${progressPercent}%`;
 }
 
 function renderAssignments() {
   const weekId = getSelectedWeekId();
-  const selectedWeek = weeks.find((week) => week.id === weekId);
-
-  weekDates.textContent = selectedWeek ? selectedWeek.dates : "";
   assignmentList.innerHTML = "";
 
   classes.forEach((className) => {

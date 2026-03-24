@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -9,15 +9,15 @@
 <body>
   <main class="app">
     <header class="app-header">
-      <p class="eyebrow">Version 1</p>
       <h1>Assignment Tracker</h1>
-      <p class="subtitle">Pick a week, add your assignments, and check them off as you finish them.</p>
     </header>
 
-    <section class="panel">
+    <section class="panel panel-primary">
       <label class="label" for="week-select">Week</label>
       <select id="week-select" class="input"></select>
-      <p id="week-dates" class="helper-text"></p>
+      <div class="progress-wrap" aria-hidden="true">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
       <p id="progress-text" class="progress-text">0 of 0 completed</p>
     </section>
 
@@ -41,7 +41,7 @@
       </form>
     </section>
 
-    <section id="assignment-list" class="panel assignment-list" aria-live="polite"></section>
+    <section id="assignment-list" class="assignment-list" aria-live="polite"></section>
   </main>
 
   <script src="script.js"></script>

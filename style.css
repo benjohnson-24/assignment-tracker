@@ -126,4 +126,131 @@ h3 {
   background: linear-gradient(180deg, var(--accent-strong), var(--accent));
   color: #061009;
   font-weight: 700;
-  cursor: pointer
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(79, 159, 104, 0.28);
+}
+
+.button:hover,
+.button:focus-visible {
+  filter: brightness(1.05);
+}
+
+.progress-text {
+  margin: 12px 0 0;
+  font-weight: 700;
+  color: #e8f5ea;
+}
+
+.progress-wrap {
+  width: 100%;
+  height: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+  border: 1px solid rgba(111, 156, 126, 0.18);
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3f8255 0%, var(--accent-strong) 100%);
+  box-shadow: 0 0 18px rgba(100, 194, 127, 0.24);
+  transition: width 180ms ease;
+}
+
+.assignment-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.class-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(15, 22, 18, 0.96), rgba(12, 18, 15, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.assignment-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assignment-item + .assignment-item {
+  margin-top: 10px;
+}
+
+.assignment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.assignment-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.assignment-checkbox {
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  flex: 0 0 auto;
+  accent-color: var(--accent-strong);
+}
+
+.assignment-task {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(111, 156, 126, 0.22);
+  border-radius: 14px;
+  background: rgba(9, 14, 11, 0.96);
+  color: #f4f8f4;
+  overflow-wrap: anywhere;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.assignment-row.completed .assignment-task {
+  background: var(--complete);
+  border-color: rgba(100, 194, 127, 0.34);
+  text-decoration: line-through;
+  color: #b9cabd;
+}
+
+.delete-button {
+  border: 1px solid rgba(211, 137, 137, 0.25);
+  background: rgba(211, 137, 137, 0.08);
+  color: #f1c6c6;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 8px 10px;
+  flex: 0 0 auto;
+}
+
+.empty-state {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .app {
+    padding: 30px 18px 42px;
+  }
+
+  .panel,
+  .class-card {
+    padding: 18px;
+  }
+}

@@ -81,14 +81,20 @@ function loadData() {
 
     weeks.forEach((week) => {
       classes.forEach((className) => {
-        const items = parsed?.[week.id]?.[className];
+        const items = parsed && parsed[week.id] && parsed[week.id][className];
 
         if (Array.isArray(items)) {
-          cleanData[week.id][className] = items.map((item) => ({
-            id: item.id || getId(),
-            task: String(item.task || "").trim(),
-            completed: Boolean(item.completed)
-          })).filter((item) => item.task);
+          cleanData[week.id][className] = items
+            .map(function (item) {
+              return {
+                id: item.id || getId(),
+                task: String(item.task || "").trim(),
+                completed: Boolean(item.completed)
+              };
+            })
+            .filter(function (item) {
+              return item.task;
+            });
         }
       });
     });
@@ -109,14 +115,14 @@ function fillSelectors() {
   weekSelect.innerHTML = "";
   classSelect.innerHTML = "";
 
-  weeks.forEach((week) => {
+  weeks.forEach(function (week) {
     const option = document.createElement("option");
     option.value = week.id;
     option.textContent = week.label;
     weekSelect.appendChild(option);
   });
 
-  classes.forEach((className) => {
+  classes.forEach(function (className) {
     const option = document.createElement("option");
     option.value = className;
     option.textContent = className;
@@ -129,14 +135,143 @@ function getSelectedWeekId() {
 }
 
 function updateProgress(weekId) {
-  const weekAssignments = classes.flatMap((className) => assignmentData[weekId][className]);
+  const weekAssignments = classes.flatMap(function (className) {
+    return assignmentData[weekId][className];
+  });
+
   const total = weekAssignments.length;
-  const completed = weekAssignments.filter((item) => item.completed).length;
+  const completed = weekAssignments.filter(function (item) {
+    return item.completed;
+  }).length;
+
   const progressPercent = total === 0 ? 0 : (completed / total) * 100;
 
-  progressText.textContent = `${completed} of ${total} completed`;
-  progressBar.style.width = `${progressPercent}%`;
+  progressText.textContent = completed + " of " + total + " completed";
+  progressBar.style.width = progressPercent + "%";
 }
 
 function renderAssignments() {
-  const weekId = getSelected
+  const weekId = getSelectedWeekId();
+  assignmentList.innerHTML = "";
+
+  classes.forEach(function (className) {
+    const classCard = document.createElement("section");
+    classCard.className = "class-card";
+
+    const heading = document.createElement("h3");
+    heading.textContent = className;
+    classCard.appendChild(heading);
+
+    const items = assignmentData[weekId][className];
+
+    if (items.length === 0) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "empty-state";
+      emptyState.textContent = "No assignments added yet.";
+      classCard.appendChild(emptyState);
+    } else {
+      const list = document.createElement("ul");
+      list.className = "assignment-items";
+
+      items.forEach(function (item) {
+        const listItem = document.createElement("li");
+        listItem.className = "assignment-item";
+
+        const row = document.createElement("div");
+        row.className = item.completed ? "assignment-row completed" : "assignment-row";
+
+        const assignmentMain = document.createElement("div");
+        assignmentMain.className = "assignment-main";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "assignment-checkbox";
+        checkbox.checked = item.completed;
+        checkbox.setAttribute("aria-label", "Mark " + item.task + " as completed");
+        checkbox.addEventListener("change", function () {
+          toggleAssignment(weekId, className, item.id);
+        });
+
+        const taskLabel = document.createElement("span");
+        taskLabel.className = "assignment-task";
+        taskLabel.textContent = item.task;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-button";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", function () {
+          deleteAssignment(weekId, className, item.id);
+        });
+
+        assignmentMain.appendChild(checkbox);
+        assignmentMain.appendChild(taskLabel);
+        row.appendChild(assignmentMain);
+        row.appendChild(deleteButton);
+        listItem.appendChild(row);
+        list.appendChild(listItem);
+      });
+
+      classCard.appendChild(list);
+    }
+
+    assignmentList.appendChild(classCard);
+  });
+
+  updateProgress(weekId);
+}
+
+function addAssignment(event) {
+  event.preventDefault();
+
+  const weekId = getSelectedWeekId();
+  const className = classSelect.value;
+  const task = taskNameInput.value.trim();
+
+  if (!task) {
+    taskNameInput.focus();
+    return;
+  }
+
+  assignmentData[weekId][className].push({
+    id: getId(),
+    task: task,
+    completed: false
+  });
+
+  saveData();
+  taskNameInput.value = "";
+  renderAssignments();
+  taskNameInput.focus();
+}
+
+function toggleAssignment(weekId, className, assignmentId) {
+  const items = assignmentData[weekId][className];
+  const target = items.find(function (item) {
+    return item.id === assignmentId;
+  });
+
+  if (!target) {
+    return;
+  }
+
+  target.completed = !target.completed;
+  saveData();
+  renderAssignments();
+}
+
+function deleteAssignment(weekId, className, assignmentId) {
+  assignmentData[weekId][className] = assignmentData[weekId][className].filter(function (item) {
+    return item.id !== assignmentId;
+  });
+
+  saveData();
+  renderAssignments();
+}
+
+fillSelectors();
+weekSelect.value = weeks[0].id;
+renderAssignments();
+
+weekSelect.addEventListener("change", renderAssignments);
+assignmentForm.addEventListener("submit", addAssignment);
